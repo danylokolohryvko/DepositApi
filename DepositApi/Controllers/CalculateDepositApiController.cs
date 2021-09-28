@@ -25,14 +25,14 @@ namespace DepositApi.Controllers
         }
 
         [HttpGet]
-        public ActionResult Get(DepositModel deposit)
+        public async Task<ActionResult> Get(DepositModel deposit)
         {
             var validator = new DepositValidator();
             var valResult = validator.Validate(deposit);
             if (valResult.IsValid)
             {
                 var depositDTO = this.mapper.Map<DepositDTO>(deposit);
-                var depositCalcDTO = this.depositService.PersentCalculationAsync(depositDTO);
+                var depositCalcDTO = await this.depositService.PersentCalculationAsync(depositDTO);
                 var depositCalc = this.mapper.Map<List<DepositCalcModel>>(depositCalcDTO);
                 return new JsonResult(depositCalc);
             }

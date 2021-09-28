@@ -1,4 +1,5 @@
-﻿using DepositApi.DAL.EntityFramework;
+﻿using DepositApi.BLL.Mapper;
+using DepositApi.DAL.EntityFramework;
 using DepositApi.DAL.Models;
 using DepositApi.DAL.Repository;
 using Microsoft.EntityFrameworkCore;
@@ -15,6 +16,7 @@ namespace DepositApiDI
                 options.UseSqlServer(connection));
             services.AddScoped<IRepository<Deposit>, Repository<Deposit>>();
             services.AddScoped<IRepository<DepositCalc>, Repository<DepositCalc>>();
+            services.AddAutoMapper(typeof(MapperProfile));
         }
     }
 }

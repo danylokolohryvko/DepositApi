@@ -27,7 +27,7 @@ namespace DepositApi.Controllers
         public async Task<ActionResult> Get(GetDepositCalcsModel model)
         {
             var depositCalcDTOs = await this.depositService.GetDepositCalcsAsync(model.DepositId);
-            var depositCalcs = this.mapper.Map<List<DepositCalc>>(depositCalcDTOs);
+            var depositCalcs = this.mapper.Map<List<DepositCalcModel>>(depositCalcDTOs);
             return Ok(JsonSerializer.Serialize(depositCalcs));
         }
     }
