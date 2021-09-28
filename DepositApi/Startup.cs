@@ -1,6 +1,7 @@
 using DepositApi.BLL.Intrerfaces;
 using DepositApi.BLL.Services;
 using DepositApi.Mapper;
+using DepositApiDI;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -29,6 +30,8 @@ namespace DepositApi
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
+            string connection = Configuration.GetConnectionString("DefaultConnection");
+            Dependencies.Inject(services, connection);
             services.AddScoped<IDepositService, DepositService>();
             services.AddAutoMapper(typeof(MapperProfile));
         }
