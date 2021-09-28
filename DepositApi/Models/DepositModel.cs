@@ -1,4 +1,5 @@
-﻿using System;
+﻿using FluentValidation;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -13,5 +14,15 @@ namespace DepositApi.Models
         public int? Term { get; set; }
         
         public double? Percent { get; set; }
+    }
+
+    public class DepositValidator : AbstractValidator<DepositModel>
+    {
+        public DepositValidator()
+        {
+            RuleFor(d => d.Amount).NotNull();
+            RuleFor(d => d.Term).NotNull();
+            RuleFor(d => d.Percent).NotNull();
+        }
     }
 }

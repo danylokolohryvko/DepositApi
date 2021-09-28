@@ -2,6 +2,7 @@
 using DepositApi.BLL.DTO;
 using DepositApi.BLL.Intrerfaces;
 using DepositApi.Models;
+using FluentValidation.Results;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -26,7 +27,9 @@ namespace DepositApi.Controllers
         [HttpGet]
         public ActionResult Get(DepositModel deposit)
         {
-            if (ModelState.IsValid)
+            var validator = new DepositValidator();
+            var valResult = validator.Validate(deposit);
+            if (valResult.IsValid)
             {
                 var depositDTO = this.mapper.Map<DepositDTO>(deposit);
                 var depositCalcDTO = this.depositService.PersentCalculationAsync(depositDTO);
@@ -35,7 +38,11 @@ namespace DepositApi.Controllers
             }
             else
             {
-                return BadRequest();
+                foreach (ValidationFailure f in valResult.Errors)
+                {
+                    ModelState.AddModelError(f.PropertyName, f.ErrorMessage);
+                }
+                return BadRequest(ModelState);
             }
         }
     }
