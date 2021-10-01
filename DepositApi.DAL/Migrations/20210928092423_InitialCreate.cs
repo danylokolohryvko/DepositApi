@@ -11,10 +11,10 @@ namespace DepositApi.DAL.Migrations
                 columns: c => new
                 {
                     Id = c.Column<int>(nullable: false).Annotation("SqlServer:Identity", "1, 1"),
-                    Amount = c.Column<double>(nullable: false),
+                    Amount = c.Column<decimal>(nullable: false),
                     Term = c.Column<int>(nullable: false),
                     Date = c.Column<DateTime>(nullable: false),
-                    Percent = c.Column<double>(nullable: false)
+                    Percent = c.Column<decimal>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -26,8 +26,8 @@ namespace DepositApi.DAL.Migrations
                 {
                     Id = c.Column<int>(nullable: false).Annotation("SqlServer:Identity", "1, 1"),
                     Month = c.Column<int>(nullable: false),
-                    PercentAdded = c.Column<double>(nullable: false),
-                    TotalAmount = c.Column<double>(nullable: false),
+                    PercentAdded = c.Column<decimal>(nullable: false),
+                    TotalAmount = c.Column<decimal>(nullable: false),
                     DepositId = c.Column<int>(nullable: false)
                 },
                 constraints: table =>

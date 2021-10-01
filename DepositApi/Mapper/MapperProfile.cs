@@ -12,8 +12,8 @@ namespace DepositApi.Mapper
     {
         public MapperProfile()
         {
-            CreateMap<DepositCalcDTO, DepositCalcModel>();
-            CreateMap<DepositCalcModel, DepositCalcDTO>();
+            CreateMap<DepositCalculationDTO, DepositCalculationModel>();
+            CreateMap<DepositCalculationModel, DepositCalculationDTO>();
             CreateMap<DepositDTO, DepositModel>();
             CreateMap<DepositModel, DepositDTO>();
         }

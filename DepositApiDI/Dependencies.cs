@@ -15,7 +15,7 @@ namespace DepositApiDI
             services.AddDbContext<AppDbContext>(options =>
                 options.UseSqlServer(connection));
             services.AddScoped<IRepository<Deposit>, Repository<Deposit>>();
-            services.AddScoped<IRepository<DepositCalc>, Repository<DepositCalc>>();
+            services.AddScoped<IRepository<DepositCalculation>, Repository<DepositCalculation>>();
             services.AddAutoMapper(typeof(MapperProfile));
         }
     }

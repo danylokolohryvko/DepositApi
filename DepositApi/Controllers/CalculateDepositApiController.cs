@@ -13,12 +13,12 @@ namespace DepositApi.Controllers
 {
     [ApiController]
     [Route("/api/calculate")]
-    public class DepositCalcApiController : ControllerBase
+    public class DepositCalculationApiController : ControllerBase
     {
         private readonly IDepositService depositService;
         private readonly IMapper mapper;
 
-        public DepositCalcApiController(IDepositService depositService, IMapper mapper)
+        public DepositCalculationApiController(IDepositService depositService, IMapper mapper)
         {
             this.depositService = depositService;
             this.mapper = mapper;
@@ -32,9 +32,10 @@ namespace DepositApi.Controllers
             if (valResult.IsValid)
             {
                 var depositDTO = this.mapper.Map<DepositDTO>(deposit);
-                var depositCalcDTO = await this.depositService.PersentCalculationAsync(depositDTO);
-                var depositCalc = this.mapper.Map<List<DepositCalcModel>>(depositCalcDTO);
-                return new JsonResult(depositCalc);
+                var depositCalculetionDTO = await this.depositService.PersentCalculationAsync(depositDTO);
+                var depositCalculetion = this.mapper.Map<List<DepositCalculationModel>>(depositCalculetionDTO);
+
+                return new JsonResult(depositCalculetion);
             }
             else
             {
@@ -42,6 +43,7 @@ namespace DepositApi.Controllers
                 {
                     ModelState.AddModelError(f.PropertyName, f.ErrorMessage);
                 }
+
                 return BadRequest(ModelState);
             }
         }

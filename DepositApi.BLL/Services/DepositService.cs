@@ -13,25 +13,25 @@ namespace DepositApi.BLL.Services
     public class DepositService : IDepositService
     {
         private readonly IRepository<Deposit> depositRepository;
-        private readonly IRepository<DepositCalc> depositCalcRepository;
+        private readonly IRepository<DepositCalculation> depositCalculetionRepository;
         private readonly IMapper mapper;
 
-        public DepositService(IRepository<Deposit> depositRepository, IRepository<DepositCalc> depositCalcRepository, IMapper mapper)
+        public DepositService(IRepository<Deposit> depositRepository, IRepository<DepositCalculation> depositCalculetionRepository, IMapper mapper)
         {
             this.depositRepository = depositRepository;
-            this.depositCalcRepository = depositCalcRepository;
+            this.depositCalculetionRepository = depositCalculetionRepository;
             this.mapper = mapper;
         }
 
-        public async Task<List<DepositCalcDTO>> PersentCalculationAsync(DepositDTO depositDTO)
+        public async Task<List<DepositCalculationDTO>> PersentCalculationAsync(DepositDTO depositDTO)
         {
-            var result = new List<DepositCalcDTO>();
+            var result = new List<DepositCalculationDTO>();
             depositDTO.Date = DateTime.UtcNow.Date;
             var deposit = this.mapper.Map<Deposit>(depositDTO);
             await this.depositRepository.CreateAsync(deposit);
             for (int i = 1; i <= depositDTO.Term; i ++)
             {
-                result.Add(new DepositCalcDTO
+                result.Add(new DepositCalculationDTO
                 {
                     Month = i,
                     PercentAdded = Math.Round(depositDTO.Amount * (depositDTO.Percent / 12 / 100), 2, MidpointRounding.AwayFromZero),
@@ -39,8 +39,9 @@ namespace DepositApi.BLL.Services
                     DepositId = deposit.Id
                 });
             }
-            var depositCalcs = mapper.Map<List<DepositCalc>>(result);
-            await this.depositCalcRepository.CreateRangeAsync(depositCalcs);
+            var depositCalculetions = mapper.Map<List<DepositCalculation>>(result);
+            await this.depositCalculetionRepository.CreateRangeAsync(depositCalculetions);
+
             return result;
         }
 
@@ -48,24 +49,27 @@ namespace DepositApi.BLL.Services
         {
             var deposits = await this.depositRepository.FindRangeAsync(d => true, startIndex, count);
             var depositsDTO = this.mapper.Map<List<DepositDTO>>(deposits);
+
             return depositsDTO;
         }
 
-        public async Task<List<DepositCalcDTO>> GetDepositCalcsAsync(int depositId)
+        public async Task<List<DepositCalculationDTO>> GetDepositCalculetionsAsync(int depositId)
         {
-            var depositCalcs = await this.depositCalcRepository.FindRangeAsync(d => d.DepositId == depositId, 0, 100);
-            var depositCalcDTOs = this.mapper.Map<List<DepositCalcDTO>>(depositCalcs);
-            return depositCalcDTOs;
+            var depositCalculetions = await this.depositCalculetionRepository.FindRangeAsync(d => d.DepositId == depositId, 0, 100);
+            var depositCalculetionDTOs = this.mapper.Map<List<DepositCalculationDTO>>(depositCalculetions);
+
+            return depositCalculetionDTOs;
         }
 
-        public async Task<byte[]> GetDepositCalcCSVAsync(int depositId)
+        public async Task<byte[]> GetDepositCalculetionCSVAsync(int depositId)
         {
             string result = string.Empty;
-            var depositCalcs = await this.depositCalcRepository.FindRangeAsync(d => d.DepositId == depositId, 0, 100);
-            foreach (DepositCalc depositCalc in depositCalcs)
+            var depositCalculetions = await this.depositCalculetionRepository.FindRangeAsync(d => d.DepositId == depositId, 0, 100);
+            foreach (DepositCalculation depositCalculetion in depositCalculetions)
             {
-                result += $"{depositCalc.Month},{depositCalc.PercentAdded},{depositCalc.TotalAmount}\n";
+                result += $"{depositCalculetion.Month},{depositCalculetion.PercentAdded},{depositCalculetion.TotalAmount}\n";
             }
+
             return Encoding.ASCII.GetBytes(result);
         }
     }

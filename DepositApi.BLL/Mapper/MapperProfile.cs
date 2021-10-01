@@ -13,8 +13,8 @@ namespace DepositApi.BLL.Mapper
         {
             CreateMap<DepositDTO, Deposit>();
             CreateMap<Deposit, DepositDTO>();
-            CreateMap<DepositCalcDTO, DepositCalc>();
-            CreateMap<DepositCalc, DepositCalcDTO>();
+            CreateMap<DepositCalculationDTO, DepositCalculation>();
+            CreateMap<DepositCalculation, DepositCalculationDTO>();
         }
     }
 }

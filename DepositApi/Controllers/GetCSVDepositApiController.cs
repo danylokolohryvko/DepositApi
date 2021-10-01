@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 namespace DepositApi.Controllers
 {
     [ApiController]
-    [Route("/api/depositcalc/csv")]
+    [Route("/api/depositcalculation/csv")]
     public class GetCSVDepositApiController : ControllerBase
     {
         private readonly IDepositService depositService;
@@ -23,8 +23,9 @@ namespace DepositApi.Controllers
         [HttpGet]
         public async Task<FileResult> Get(int depositId)
         {
-            var depositCalcCSV = await this.depositService.GetDepositCalcCSVAsync(depositId);
-            return File(depositCalcCSV, "text/plain", "DepositCalculations.csv");
+            var depositCalculetionCSV = await this.depositService.GetDepositCalculetionCSVAsync(depositId);
+
+            return File(depositCalculetionCSV, "text/plain", "DepositCalculations.csv");
         }
     }
 }

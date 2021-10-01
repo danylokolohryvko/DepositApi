@@ -2,17 +2,17 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace DepositApi.BLL.DTO
+namespace DepositApi.DAL.Models
 {
-    public class DepositCalcDTO
+    public class DepositCalculation
     {
         public int Id { get; set; }
 
         public int Month { get; set; }
 
-        public double PercentAdded { get; set; }
+        public decimal PercentAdded { get; set; }
 
-        public double TotalAmount { get; set; }
+        public decimal TotalAmount { get; set; }
 
         public int DepositId { get; set; }
     }

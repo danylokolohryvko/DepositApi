@@ -11,11 +11,11 @@ namespace DepositApi.Models
     {
         public int Id { get; set; }
 
-        public double? Amount { get; set; }
+        public decimal? Amount { get; set; }
 
         public int? Term { get; set; }
         
-        public double? Percent { get; set; }
+        public decimal? Percent { get; set; }
 
         public DateTime Date { get; set; }
     }

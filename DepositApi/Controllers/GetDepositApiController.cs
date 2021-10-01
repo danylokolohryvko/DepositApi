@@ -29,6 +29,7 @@ namespace DepositApi.Controllers
         {
             var depositDTOs = await this.depositService.GetDepositsAsync(model.StartIndex, model.Count) ;
             var deposits = this.mapper.Map<List<DepositModel>>(depositDTOs);
+
             return new JsonResult(deposits);
         }
     }

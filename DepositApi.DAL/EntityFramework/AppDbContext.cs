@@ -10,7 +10,7 @@ namespace DepositApi.DAL.EntityFramework
     {
         public DbSet<Deposit> deposits;
 
-        public DbSet<DepositCalc> depositCalcs;
+        public DbSet<DepositCalculation> depositCalculations;
 
         public AppDbContext(DbContextOptions options) : base(options) 
         {
@@ -22,7 +22,7 @@ namespace DepositApi.DAL.EntityFramework
             base.OnModelCreating(modelBuilder);
             modelBuilder.Entity<Deposit>()
                 .ToTable("Deposits", t => t.ExcludeFromMigrations());
-            modelBuilder.Entity<DepositCalc>()
+            modelBuilder.Entity<DepositCalculation>()
                 .ToTable("DepositCalcs", t => t.ExcludeFromMigrations());
         }
     }

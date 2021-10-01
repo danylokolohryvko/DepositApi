@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DepositApi.DAL.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20210928092423_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20211001145445_ChangeModelTypesToDecimal")]
+    partial class ChangeModelTypesToDecimal
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -28,14 +28,14 @@ namespace DepositApi.DAL.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<double>("Amount")
-                        .HasColumnType("float");
+                    b.Property<decimal>("Amount")
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<DateTime>("Date")
                         .HasColumnType("datetime2");
 
-                    b.Property<double>("Percent")
-                        .HasColumnType("float");
+                    b.Property<decimal>("Percent")
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<int>("Term")
                         .HasColumnType("int");
@@ -58,11 +58,11 @@ namespace DepositApi.DAL.Migrations
                     b.Property<int>("Month")
                         .HasColumnType("int");
 
-                    b.Property<double>("PercentAdded")
-                        .HasColumnType("float");
+                    b.Property<decimal>("PercentAdded")
+                        .HasColumnType("decimal(18,2)");
 
-                    b.Property<double>("TotalAmount")
-                        .HasColumnType("float");
+                    b.Property<decimal>("TotalAmount")
+                        .HasColumnType("decimal(18,2)");
 
                     b.HasKey("Id");
 
