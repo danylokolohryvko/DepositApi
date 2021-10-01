@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace DepositApi.Models
 {
-    public class GetDepositCalculetionsModel
+    public class GetDepositCalculationsModel
     {
         public int DepositId { get; set; }
     }
