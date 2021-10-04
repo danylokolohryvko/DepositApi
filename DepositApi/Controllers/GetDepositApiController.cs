@@ -21,7 +21,7 @@ namespace DepositApi.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult> Get(GetDepositsModel model)
+        public async Task<ActionResult> Get([FromQuery] GetDepositsModel model)
         {
             var depositDTOs = await this.depositService.GetDepositsAsync(model.StartIndex.Value, model.Count.Value) ;
             var deposits = this.mapper.Map<List<DepositModel>>(depositDTOs);

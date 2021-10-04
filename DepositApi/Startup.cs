@@ -52,6 +52,11 @@ namespace DepositApi
 
             app.UseAuthorization();
 
+            app.UseCors(policy =>
+                policy.WithOrigins("https://localhost:44325")
+                .AllowAnyMethod()
+                .AllowAnyHeader());
+
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
