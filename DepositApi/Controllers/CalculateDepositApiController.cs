@@ -4,9 +4,7 @@ using DepositApi.BLL.Intrerfaces;
 using DepositApi.Models;
 using FluentValidation.Results;
 using Microsoft.AspNetCore.Mvc;
-using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace DepositApi.Controllers
@@ -27,25 +25,11 @@ namespace DepositApi.Controllers
         [HttpGet]
         public async Task<ActionResult> Get(DepositModel deposit)
         {
-            var validator = new DepositValidator();
-            var valResult = validator.Validate(deposit);
-            if (valResult.IsValid)
-            {
-                var depositDTO = this.mapper.Map<DepositDTO>(deposit);
-                var depositCalculetionDTO = await this.depositService.PersentCalculationAsync(depositDTO);
-                var depositCalculetion = this.mapper.Map<List<DepositCalculationModel>>(depositCalculetionDTO);
+            var depositDTO = this.mapper.Map<DepositDTO>(deposit);
+            var depositCalculationDTO = await this.depositService.PercentCalculationAsync(depositDTO);
+            var depositCalculation = this.mapper.Map<List<DepositCalculationModel>>(depositCalculationDTO);
 
-                return new JsonResult(depositCalculetion);
-            }
-            else
-            {
-                foreach (ValidationFailure f in valResult.Errors)
-                {
-                    ModelState.AddModelError(f.PropertyName, f.ErrorMessage);
-                }
-
-                return BadRequest(ModelState);
-            }
+            return Ok(depositCalculation);
         }
     }
 }

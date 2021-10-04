@@ -2,22 +2,19 @@
 using DepositApi.BLL.Intrerfaces;
 using DepositApi.Models;
 using Microsoft.AspNetCore.Mvc;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace DepositApi.Controllers
 {
     [ApiController]
     [Route("/api/depositcalculation")]
-    public class GetDepositCalculetionApiController : ControllerBase
+    public class GetDepositCalculationApiController : ControllerBase
     {
         private readonly IDepositService depositService;
         private readonly IMapper mapper;
 
-        public GetDepositCalculetionApiController(IDepositService depositService, IMapper mapper)
+        public GetDepositCalculationApiController(IDepositService depositService, IMapper mapper)
         {
             this.depositService = depositService;
             this.mapper = mapper;
@@ -26,10 +23,10 @@ namespace DepositApi.Controllers
         [HttpGet]
         public async Task<ActionResult> Get(GetDepositCalculationsModel model)
         {
-            var depositCalculetionDTOs = await this.depositService.GetDepositCalculetionsAsync(model.DepositId);
-            var depositCalculetions = this.mapper.Map<List<DepositCalculationModel>>(depositCalculetionDTOs);
+            var depositCalculationDTOs = await this.depositService.GetDepositCalculationsAsync(model.DepositId.Value);
+            var depositCalculations = this.mapper.Map<List<DepositCalculationModel>>(depositCalculationDTOs);
 
-            return new JsonResult(depositCalculetions);
+            return Ok(depositCalculations);
         }
     }
 }

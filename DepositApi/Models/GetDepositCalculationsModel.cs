@@ -1,12 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using FluentValidation;
 
 namespace DepositApi.Models
 {
     public class GetDepositCalculationsModel
     {
-        public int DepositId { get; set; }
+        public int? DepositId { get; set; }
+    }
+
+    public class GetDepositCalculationsValidator : AbstractValidator<GetDepositCalculationsModel>
+    {
+        public GetDepositCalculationsValidator()
+        {
+            RuleFor(d => d.DepositId).NotNull();
+        }
     }
 }

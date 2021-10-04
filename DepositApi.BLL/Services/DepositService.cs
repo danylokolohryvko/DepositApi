@@ -13,17 +13,17 @@ namespace DepositApi.BLL.Services
     public class DepositService : IDepositService
     {
         private readonly IRepository<Deposit> depositRepository;
-        private readonly IRepository<DepositCalculation> depositCalculetionRepository;
+        private readonly IRepository<DepositCalculation> depositCalculationRepository;
         private readonly IMapper mapper;
 
-        public DepositService(IRepository<Deposit> depositRepository, IRepository<DepositCalculation> depositCalculetionRepository, IMapper mapper)
+        public DepositService(IRepository<Deposit> depositRepository, IRepository<DepositCalculation> depositCalculationRepository, IMapper mapper)
         {
             this.depositRepository = depositRepository;
-            this.depositCalculetionRepository = depositCalculetionRepository;
+            this.depositCalculationRepository = depositCalculationRepository;
             this.mapper = mapper;
         }
 
-        public async Task<List<DepositCalculationDTO>> PersentCalculationAsync(DepositDTO depositDTO)
+        public async Task<List<DepositCalculationDTO>> PercentCalculationAsync(DepositDTO depositDTO)
         {
             var result = new List<DepositCalculationDTO>();
             depositDTO.Date = DateTime.UtcNow.Date;
@@ -39,8 +39,8 @@ namespace DepositApi.BLL.Services
                     DepositId = deposit.Id
                 });
             }
-            var depositCalculetions = mapper.Map<List<DepositCalculation>>(result);
-            await this.depositCalculetionRepository.CreateRangeAsync(depositCalculetions);
+            var depositCalculations = mapper.Map<List<DepositCalculation>>(result);
+            await this.depositCalculationRepository.CreateRangeAsync(depositCalculations);
 
             return result;
         }
@@ -53,21 +53,21 @@ namespace DepositApi.BLL.Services
             return depositsDTO;
         }
 
-        public async Task<List<DepositCalculationDTO>> GetDepositCalculetionsAsync(int depositId)
+        public async Task<List<DepositCalculationDTO>> GetDepositCalculationsAsync(int depositId)
         {
-            var depositCalculetions = await this.depositCalculetionRepository.FindRangeAsync(d => d.DepositId == depositId, 0, 100);
-            var depositCalculetionDTOs = this.mapper.Map<List<DepositCalculationDTO>>(depositCalculetions);
+            var depositCalculations = await this.depositCalculationRepository.FindRangeAsync(d => d.DepositId == depositId, 0, 100);
+            var depositCalculationDTOs = this.mapper.Map<List<DepositCalculationDTO>>(depositCalculations);
 
-            return depositCalculetionDTOs;
+            return depositCalculationDTOs;
         }
 
-        public async Task<byte[]> GetDepositCalculetionCSVAsync(int depositId)
+        public async Task<byte[]> GetDepositCalculationCSVAsync(int depositId)
         {
             string result = string.Empty;
-            var depositCalculetions = await this.depositCalculetionRepository.FindRangeAsync(d => d.DepositId == depositId, 0, 100);
-            foreach (DepositCalculation depositCalculetion in depositCalculetions)
+            var depositCalculations = await this.depositCalculationRepository.FindRangeAsync(d => d.DepositId == depositId, 0, 100);
+            foreach (DepositCalculation depositCalculation in depositCalculations)
             {
-                result += $"{depositCalculetion.Month},{depositCalculetion.PercentAdded},{depositCalculetion.TotalAmount}\n";
+                result += $"{depositCalculation.Month},{depositCalculation.PercentAdded},{depositCalculation.TotalAmount}\n";
             }
 
             return Encoding.ASCII.GetBytes(result);

@@ -21,9 +21,9 @@ namespace DepositApi.DAL.EntityFramework
         {
             base.OnModelCreating(modelBuilder);
             modelBuilder.Entity<Deposit>()
-                .ToTable("Deposits", t => t.ExcludeFromMigrations());
+                .ToTable("Deposits");
             modelBuilder.Entity<DepositCalculation>()
-                .ToTable("DepositCalcs", t => t.ExcludeFromMigrations());
+                .ToTable("DepositCalcs");
         }
     }
 }

@@ -1,12 +1,8 @@
 ﻿using AutoMapper;
-using DepositApi.BLL.DTO;
 using DepositApi.BLL.Intrerfaces;
 using DepositApi.Models;
 using Microsoft.AspNetCore.Mvc;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace DepositApi.Controllers
@@ -27,10 +23,10 @@ namespace DepositApi.Controllers
         [HttpGet]
         public async Task<ActionResult> Get(GetDepositsModel model)
         {
-            var depositDTOs = await this.depositService.GetDepositsAsync(model.StartIndex, model.Count) ;
+            var depositDTOs = await this.depositService.GetDepositsAsync(model.StartIndex.Value, model.Count.Value) ;
             var deposits = this.mapper.Map<List<DepositModel>>(depositDTOs);
 
-            return new JsonResult(deposits);
+            return Ok(deposits);
         }
     }
 }
