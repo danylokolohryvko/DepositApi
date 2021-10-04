@@ -1,9 +1,4 @@
-﻿using FluentValidation;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System;
 
 namespace DepositApi.Models
 {
@@ -18,15 +13,5 @@ namespace DepositApi.Models
         public decimal? Percent { get; set; }
 
         public DateTime Date { get; set; }
-    }
-
-    public class DepositValidator : AbstractValidator<DepositModel>
-    {
-        public DepositValidator()
-        {
-            RuleFor(d => d.Amount).NotNull();
-            RuleFor(d => d.Term).NotNull();
-            RuleFor(d => d.Percent).NotNull();
-        }
     }
 }
