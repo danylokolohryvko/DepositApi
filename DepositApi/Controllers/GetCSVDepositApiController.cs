@@ -19,7 +19,7 @@ namespace DepositApi.Controllers
         [HttpGet]
         public async Task<FileResult> Get(int depositId)
         {
-            var depositCalculationCSV = await this.depositService.GetDepositCalculationCSVAsync(depositId);
+            var depositCalculationCSV = await this.depositService.GetDepositCalculationCSVAsync(depositId, null);
 
             return File(depositCalculationCSV, "text/plain", "DepositCalculations.csv");
         }

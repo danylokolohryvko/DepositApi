@@ -23,7 +23,7 @@ namespace DepositApi.Controllers
         [HttpGet]
         public async Task<ActionResult> Get([FromQuery] DepositCalculationsViewModel model)
         {
-            var depositCalculationDTOs = await this.depositService.GetDepositCalculationsAsync(model.DepositId.Value);
+            var depositCalculationDTOs = await this.depositService.GetDepositCalculationsAsync(model.DepositId.Value, null);
             var depositCalculations = this.mapper.Map<List<DepositCalculationModel>>(depositCalculationDTOs);
 
             return Ok(depositCalculations);
