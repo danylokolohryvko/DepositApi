@@ -1,28 +1,17 @@
-﻿using FluentValidation;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System;
 
 namespace DepositApi.Models
 {
     public class DepositModel
     {
-        public double? Amount { get; set; }
+        public int Id { get; set; }
+
+        public decimal? Amount { get; set; }
 
         public int? Term { get; set; }
         
-        public double? Percent { get; set; }
-    }
+        public decimal? Percent { get; set; }
 
-    public class DepositValidator : AbstractValidator<DepositModel>
-    {
-        public DepositValidator()
-        {
-            RuleFor(d => d.Amount).NotNull();
-            RuleFor(d => d.Term).NotNull();
-            RuleFor(d => d.Percent).NotNull();
-        }
+        public DateTime Date { get; set; }
     }
 }

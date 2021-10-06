@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace DepositApi.BLL.DTO
+namespace DepositApi.DAL.Models
 {
-    public class DepositDTO
+    public class Deposit
     {
         public int Id { get; set; }
 
@@ -12,8 +12,8 @@ namespace DepositApi.BLL.DTO
 
         public int Term { get; set; }
 
-        public decimal Percent { get; set; }
-
         public DateTime Date { get; set; }
+
+        public decimal Percent { get; set; }
     }
 }
