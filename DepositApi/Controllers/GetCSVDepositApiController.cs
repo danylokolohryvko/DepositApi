@@ -1,6 +1,7 @@
-﻿using AutoMapper;
-using DepositApi.BLL.Intrerfaces;
+﻿using DepositApi.BLL.Intrerfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace DepositApi.Controllers
@@ -11,15 +12,17 @@ namespace DepositApi.Controllers
     {
         private readonly IDepositService depositService;
 
-        public GetCSVDepositApiController(IDepositService depositService, IMapper mapper)
+        public GetCSVDepositApiController(IDepositService depositService)
         {
             this.depositService = depositService;
         }
 
         [HttpGet]
+        [Authorize]
         public async Task<FileResult> Get(int depositId)
         {
-            var depositCalculationCSV = await this.depositService.GetDepositCalculationCSVAsync(depositId, null);
+            string id = User?.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var depositCalculationCSV = await this.depositService.GetDepositCalculationCSVAsync(depositId, id);
 
             return File(depositCalculationCSV, "text/plain", "DepositCalculations.csv");
         }

@@ -1,8 +1,10 @@
 ﻿using AutoMapper;
 using DepositApi.BLL.Intrerfaces;
 using DepositApi.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace DepositApi.Controllers
@@ -21,9 +23,11 @@ namespace DepositApi.Controllers
         }
 
         [HttpGet]
+        [Authorize]
         public async Task<ActionResult> Get([FromQuery] DepositCalculationsViewModel model)
         {
-            var depositCalculationDTOs = await this.depositService.GetDepositCalculationsAsync(model.DepositId.Value, null);
+            string id = User?.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var depositCalculationDTOs = await this.depositService.GetDepositCalculationsAsync(model.DepositId.Value, id);
             var depositCalculations = this.mapper.Map<List<DepositCalculationModel>>(depositCalculationDTOs);
 
             return Ok(depositCalculations);
