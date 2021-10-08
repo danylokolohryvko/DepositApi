@@ -57,7 +57,7 @@ namespace DepositApi
                 options.AddPolicy("ApiScope", policy =>
                 {
                     policy.RequireAuthenticatedUser();
-                    policy.RequireClaim("scope", "api1");
+                    policy.RequireClaim("scope", "depositapi");
                 });
             });
         }
@@ -77,8 +77,9 @@ namespace DepositApi
             app.UseAuthentication();
             app.UseAuthorization();
 
+            string BlazorClienUrl = Configuration.GetSection("Urls").GetSection("BlazorClient").Value;
             app.UseCors(policy =>
-                policy.WithOrigins("https://localhost:44325")
+                policy.WithOrigins(BlazorClienUrl)
                 .AllowAnyMethod()
                 .AllowAnyHeader());
 

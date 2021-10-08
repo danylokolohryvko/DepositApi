@@ -5,7 +5,6 @@ using DepositApi.DAL.Models;
 using DepositApi.DAL.Repository;
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace DepositApi.BLL.Services
@@ -77,7 +76,7 @@ namespace DepositApi.BLL.Services
             return depositCalculationDTOs;
         }
 
-        public async Task<byte[]> GetDepositCalculationCSVAsync(int depositId, string userId)
+        public async Task<string> GetDepositCalculationCSVAsync(int depositId, string userId)
         {
             string result = string.Empty;
 
@@ -93,7 +92,7 @@ namespace DepositApi.BLL.Services
                 result += $"{depositCalculation.Month},{depositCalculation.PercentAdded},{depositCalculation.TotalAmount}\n";
             }
 
-            return Encoding.ASCII.GetBytes(result);
+            return result;
         }
     }
 }

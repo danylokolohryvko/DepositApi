@@ -19,12 +19,12 @@ namespace DepositApi.Controllers
 
         [HttpGet]
         [Authorize]
-        public async Task<FileResult> Get(int depositId)
+        public async Task<ActionResult> Get(int depositId)
         {
             string id = User?.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             var depositCalculationCSV = await this.depositService.GetDepositCalculationCSVAsync(depositId, id);
 
-            return File(depositCalculationCSV, "text/plain", "DepositCalculations.csv");
+            return Ok(depositCalculationCSV);// "text/plain", "DepositCalculations.csv");
         }
     }
 }

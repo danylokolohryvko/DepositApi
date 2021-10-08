@@ -12,6 +12,6 @@ namespace DepositApi.BLL.Intrerfaces
 
         public Task<List<DepositCalculationDTO>> GetDepositCalculationsAsync(int depositId, string userId);
 
-        public Task<byte[]> GetDepositCalculationCSVAsync(int depositId, string userId);
+        public Task<string> GetDepositCalculationCSVAsync(int depositId, string userId);
     }
 }
