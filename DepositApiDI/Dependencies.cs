@@ -4,7 +4,6 @@ using DepositApi.DAL.Models;
 using DepositApi.DAL.Repository;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using System;
 
 namespace DepositApiDI
 {

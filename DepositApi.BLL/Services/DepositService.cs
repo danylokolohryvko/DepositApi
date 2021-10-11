@@ -27,11 +27,13 @@ namespace DepositApi.BLL.Services
             var result = new List<DepositCalculationDTO>();
             depositDTO.Date = DateTime.UtcNow.Date;
             var deposit = this.mapper.Map<Deposit>(depositDTO);
+
             if (userId != null)
             {
                 deposit.UserId = userId;
                 await this.depositRepository.CreateAsync(deposit);
             }
+
             for (int i = 1; i <= depositDTO.Term; i ++)
             {
                 result.Add(new DepositCalculationDTO
@@ -42,7 +44,9 @@ namespace DepositApi.BLL.Services
                     DepositId = deposit.Id
                 });
             }
+
             var depositCalculations = mapper.Map<List<DepositCalculation>>(result);
+
             if (userId != null)
             {
                 await this.depositCalculationRepository.CreateRangeAsync(depositCalculations);
@@ -57,6 +61,7 @@ namespace DepositApi.BLL.Services
             {
                 return null;
             }
+
             var deposits = await this.depositRepository.FindRangeAsync(d => d.UserId == userId, startIndex, count);
             var depositsDTO = this.mapper.Map<List<DepositDTO>>(deposits);
 
@@ -66,10 +71,12 @@ namespace DepositApi.BLL.Services
         public async Task<List<DepositCalculationDTO>> GetDepositCalculationsAsync(int depositId, string userId)
         {
             var deposit = await this.depositRepository.FindAsync(depositId);
+
             if (deposit == null || deposit.UserId != userId)
             {
                 return null;
             }
+
             var depositCalculations = await this.depositCalculationRepository.FindRangeAsync(d => d.DepositId == depositId, 0, 100);
             var depositCalculationDTOs = this.mapper.Map<List<DepositCalculationDTO>>(depositCalculations);
 
@@ -81,6 +88,7 @@ namespace DepositApi.BLL.Services
             string result = string.Empty;
 
             var deposit = await this.depositRepository.FindAsync(depositId);
+
             if (deposit == null || deposit.UserId != userId)
             {
                 return null;

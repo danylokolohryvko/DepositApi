@@ -33,6 +33,7 @@ namespace DepositApi
             {
                 options.RegisterValidatorsFromAssemblyContaining<Startup>();
             });
+
             string connection = Configuration.GetConnectionString("DefaultConnection");
             Dependencies.Inject(services, connection);
             services.AddScoped<IDepositService, DepositService>();
