@@ -6,12 +6,12 @@ namespace DepositApi.BLL.Intrerfaces
 {
     public interface IDepositService
     {
-        public Task<List<DepositCalculationDTO>> PercentCalculationAsync(DepositDTO deposit);
+        public Task<List<DepositCalculationDTO>> PercentCalculationAsync(DepositDTO deposit, string userId = null);
 
-        public Task<List<DepositDTO>> GetDepositsAsync(int startIndex = 0, int count = 20);
+        public Task<List<DepositDTO>> GetDepositsAsync(int startIndex = 0, int count = 20, string userId = null);
 
-        public Task<List<DepositCalculationDTO>> GetDepositCalculationsAsync(int depositId);
+        public Task<List<DepositCalculationDTO>> GetDepositCalculationsAsync(int depositId, string userId);
 
-        public Task<byte[]> GetDepositCalculationCSVAsync(int depositId);
+        public Task<string> GetDepositCalculationCSVAsync(int depositId, string userId);
     }
 }

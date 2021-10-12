@@ -2,9 +2,9 @@
 using DepositApi.BLL.DTO;
 using DepositApi.BLL.Intrerfaces;
 using DepositApi.Models;
-using FluentValidation.Results;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace DepositApi.Controllers
@@ -25,8 +25,9 @@ namespace DepositApi.Controllers
         [HttpGet]
         public async Task<ActionResult> Get([FromQuery] DepositModel deposit)
         {
+            string id = User?.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             var depositDTO = this.mapper.Map<DepositDTO>(deposit);
-            var depositCalculationDTO = await this.depositService.PercentCalculationAsync(depositDTO);
+            var depositCalculationDTO = await this.depositService.PercentCalculationAsync(depositDTO, id);
             var depositCalculation = this.mapper.Map<List<DepositCalculationModel>>(depositCalculationDTO);
 
             return Ok(depositCalculation);

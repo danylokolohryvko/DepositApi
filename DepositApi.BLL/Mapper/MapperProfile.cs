@@ -1,9 +1,6 @@
 ﻿using AutoMapper;
 using DepositApi.BLL.DTO;
 using DepositApi.DAL.Models;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace DepositApi.BLL.Mapper
 {

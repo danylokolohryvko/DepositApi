@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace DepositApi.DAL.Models
 {
@@ -15,5 +13,7 @@ namespace DepositApi.DAL.Models
         public DateTime Date { get; set; }
 
         public decimal Percent { get; set; }
+
+        public string UserId { get; set; }
     }
 }
