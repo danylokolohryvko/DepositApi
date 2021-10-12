@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DepositApi.Core.Enums;
+using System;
 
 namespace DepositApi.DAL.Models
 {
@@ -15,5 +16,7 @@ namespace DepositApi.DAL.Models
         public decimal Percent { get; set; }
 
         public string UserId { get; set; }
+
+        public CalculationType CalculationType { get; set; }
     }
 }

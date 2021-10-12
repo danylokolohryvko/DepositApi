@@ -17,4 +17,8 @@
     </PackageReference>
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\DepositApi.Core\DepositApi.Core.csproj" />
+  </ItemGroup>
+
 </Project>
