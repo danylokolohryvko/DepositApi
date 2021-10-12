@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DepositApi.Core.Enums;
+using System;
 namespace DepositApi.BLL.DTO
 {
     public class DepositDTO
@@ -12,5 +13,7 @@ namespace DepositApi.BLL.DTO
         public decimal Percent { get; set; }
 
         public DateTime Date { get; set; }
+
+        public CalculationType CalculationType { get; set; }
     }
 }

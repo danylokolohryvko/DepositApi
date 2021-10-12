@@ -6,6 +6,7 @@ using DepositApi.DAL.Repository;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using DepositApi.Core.Enums;
 
 namespace DepositApi.BLL.Services
 {
@@ -24,7 +25,6 @@ namespace DepositApi.BLL.Services
 
         public async Task<List<DepositCalculationDTO>> PercentCalculationAsync(DepositDTO depositDTO, string userId = null)
         {
-            var result = new List<DepositCalculationDTO>();
             depositDTO.Date = DateTime.UtcNow.Date;
             var deposit = this.mapper.Map<Deposit>(depositDTO);
 
@@ -32,18 +32,14 @@ namespace DepositApi.BLL.Services
             {
                 deposit.UserId = userId;
                 await this.depositRepository.CreateAsync(deposit);
+                depositDTO.Id = deposit.Id;
             }
 
-            for (int i = 1; i <= depositDTO.Term; i ++)
+            var result = depositDTO.CalculationType switch
             {
-                result.Add(new DepositCalculationDTO
-                {
-                    Month = i,
-                    PercentAdded = Math.Round(depositDTO.Amount * (depositDTO.Percent / 12 / 100), 2, MidpointRounding.AwayFromZero),
-                    TotalAmount = Math.Round(depositDTO.Amount * (1 + depositDTO.Percent / 12 / 100 * i), 2, MidpointRounding.AwayFromZero),
-                    DepositId = deposit.Id
-                });
-            }
+                CalculationType.CompoundInterest => this.CompoundInterestCalculation(depositDTO),
+                _ => this.SimpleInterestCalculation(depositDTO)
+            };
 
             var depositCalculations = mapper.Map<List<DepositCalculation>>(result);
 
@@ -98,6 +94,48 @@ namespace DepositApi.BLL.Services
             foreach (DepositCalculation depositCalculation in depositCalculations)
             {
                 result += $"{depositCalculation.Month},{depositCalculation.PercentAdded},{depositCalculation.TotalAmount}\n";
+            }
+
+            return result;
+        }
+
+        private List<DepositCalculationDTO> SimpleInterestCalculation(DepositDTO depositDTO)
+        {
+            var result = new List<DepositCalculationDTO>();
+
+            for (int i = 1; i <= depositDTO.Term; i++)
+            {
+                result.Add(new DepositCalculationDTO
+                {
+                    Month = i,
+                    PercentAdded = Math.Round(depositDTO.Amount * (depositDTO.Percent / 12 / 100), 2, MidpointRounding.AwayFromZero),
+                    TotalAmount = Math.Round(depositDTO.Amount * (1 + depositDTO.Percent / 12 / 100 * i), 2, MidpointRounding.AwayFromZero),
+                    DepositId = depositDTO.Id
+                });
+            }
+
+            return result;
+        }
+
+        private List<DepositCalculationDTO> CompoundInterestCalculation(DepositDTO depositDTO)
+        {
+            var result = new List<DepositCalculationDTO>();
+
+            decimal monthPercent = 1 + depositDTO.Percent / 12 / 100;
+            decimal thisMonthRate = monthPercent;
+            decimal previousMonthRate = 1;
+
+            for (int i = 1; i <= depositDTO.Term; i++)
+            {
+                result.Add(new DepositCalculationDTO
+                {
+                    Month = i,
+                    PercentAdded = Math.Round(depositDTO.Amount * (thisMonthRate - previousMonthRate), 2, MidpointRounding.AwayFromZero),
+                    TotalAmount = Math.Round(depositDTO.Amount * thisMonthRate, 2, MidpointRounding.AwayFromZero),
+                    DepositId = depositDTO.Id
+                });
+                previousMonthRate = thisMonthRate;
+                thisMonthRate *= monthPercent;
             }
 
             return result;
