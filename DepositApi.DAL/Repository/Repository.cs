@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Linq;
 using System.Linq.Expressions;
+using DepositApi.Core.Intrerfaces;
 
 namespace DepositApi.DAL.Repository
 {

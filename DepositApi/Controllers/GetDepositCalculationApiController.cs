@@ -1,9 +1,7 @@
-﻿using DepositApi.BLL.Intrerfaces;
-using DepositApi.Core.Models;
+﻿using DepositApi.Core.Intrerfaces;
 using DepositApi.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Collections.Generic;
 using System.Security.Claims;
 using System.Threading.Tasks;
 

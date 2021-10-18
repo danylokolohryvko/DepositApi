@@ -1,10 +1,9 @@
-﻿using DepositApi.BLL.Intrerfaces;
-using DepositApi.DAL.Repository;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using DepositApi.Core.Enums;
 using DepositApi.Core.Models;
+using DepositApi.Core.Intrerfaces;
 
 namespace DepositApi.BLL.Services
 {

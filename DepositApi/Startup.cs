@@ -1,4 +1,3 @@
-using DepositApi.BLL.Intrerfaces;
 using DepositApi.BLL.Services;
 using DepositApi.FluentValidation;
 using DepositApiDI;
@@ -9,6 +8,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using FluentValidation.AspNetCore;
 using Microsoft.IdentityModel.Tokens;
+using DepositApi.Core.Intrerfaces;
 
 namespace DepositApi
 {

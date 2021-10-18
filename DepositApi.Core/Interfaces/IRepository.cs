@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 
-namespace DepositApi.DAL.Repository
+namespace DepositApi.Core.Intrerfaces
 {
     public interface IRepository<T> where T : class
     {

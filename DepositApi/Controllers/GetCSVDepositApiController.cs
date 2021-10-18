@@ -1,4 +1,4 @@
-﻿using DepositApi.BLL.Intrerfaces;
+﻿using DepositApi.Core.Intrerfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;

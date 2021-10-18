@@ -5,7 +5,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\DepositApi.DAL\DepositApi.DAL.csproj" />
+    <ProjectReference Include="..\DepositApi.Core\DepositApi.Core.csproj" />
   </ItemGroup>
 
 </Project>

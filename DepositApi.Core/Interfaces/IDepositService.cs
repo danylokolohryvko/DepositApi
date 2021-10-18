@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace DepositApi.BLL.Intrerfaces
+namespace DepositApi.Core.Intrerfaces
 {
     public interface IDepositService
     {

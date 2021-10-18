@@ -1,4 +1,5 @@
-﻿using DepositApi.Core.Models;
+﻿using DepositApi.Core.Intrerfaces;
+using DepositApi.Core.Models;
 using DepositApi.DAL.EntityFramework;
 using DepositApi.DAL.Repository;
 using Microsoft.EntityFrameworkCore;

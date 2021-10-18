@@ -6,6 +6,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\DepositApi.BLL\DepositApi.BLL.csproj" />
+    <ProjectReference Include="..\DepositApi.Core\DepositApi.Core.csproj" />
     <ProjectReference Include="..\DepositApi.DAL\DepositApi.DAL.csproj" />
   </ItemGroup>
 
