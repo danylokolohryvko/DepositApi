@@ -13,7 +13,7 @@ namespace DepositApi.DAL.Repository
 
         public Task<T> FindAsync(int id);
 
-        public Task<IEnumerable<T>> FindRangeAsync(Expression<Func<T, bool>> predicate, int startIndex, int count);
+        public Task<List<T>> FindRangeAsync(Expression<Func<T, bool>> predicate, int startIndex, int count);
 
         public Task UpdateAsync(T item);
 

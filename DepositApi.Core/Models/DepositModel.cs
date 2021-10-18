@@ -1,7 +1,7 @@
 ﻿using DepositApi.Core.Enums;
 using System;
 
-namespace DepositApi.Models
+namespace DepositApi.Core.Models
 {
     public class DepositModel
     {
@@ -14,6 +14,8 @@ namespace DepositApi.Models
         public decimal? Percent { get; set; }
 
         public DateTime Date { get; set; }
+
+        public string UserId { get; set; }
 
         public CalculationType? CalculationType { get; set; }
     }

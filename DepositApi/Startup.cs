@@ -1,7 +1,6 @@
 using DepositApi.BLL.Intrerfaces;
 using DepositApi.BLL.Services;
 using DepositApi.FluentValidation;
-using DepositApi.Mapper;
 using DepositApiDI;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -37,7 +36,6 @@ namespace DepositApi
             string connection = Configuration.GetConnectionString("DefaultConnection");
             Dependencies.Inject(services, connection);
             services.AddScoped<IDepositService, DepositService>();
-            services.AddAutoMapper(typeof(MapperProfile));
 
             string authUrl = Configuration.GetSection("Urls").GetSection("Authority").Value;
             services.AddAuthentication("Bearer")

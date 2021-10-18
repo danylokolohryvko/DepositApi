@@ -1,6 +1,5 @@
-﻿using DepositApi.BLL.Mapper;
+﻿using DepositApi.Core.Models;
 using DepositApi.DAL.EntityFramework;
-using DepositApi.DAL.Models;
 using DepositApi.DAL.Repository;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
@@ -13,9 +12,8 @@ namespace DepositApiDI
         {
             services.AddDbContext<AppDbContext>(options =>
                 options.UseSqlServer(connection));
-            services.AddScoped<IRepository<Deposit>, Repository<Deposit>>();
-            services.AddScoped<IRepository<DepositCalculation>, Repository<DepositCalculation>>();
-            services.AddAutoMapper(typeof(MapperProfile));
+            services.AddScoped<IRepository<DepositModel>, Repository<DepositModel>>();
+            services.AddScoped<IRepository<DepositCalculationModel>, Repository<DepositCalculationModel>>();
         }
     }
 }

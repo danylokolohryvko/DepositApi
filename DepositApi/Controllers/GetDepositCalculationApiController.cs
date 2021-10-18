@@ -1,5 +1,5 @@
-﻿using AutoMapper;
-using DepositApi.BLL.Intrerfaces;
+﻿using DepositApi.BLL.Intrerfaces;
+using DepositApi.Core.Models;
 using DepositApi.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -14,12 +14,10 @@ namespace DepositApi.Controllers
     public class GetDepositCalculationApiController : ControllerBase
     {
         private readonly IDepositService depositService;
-        private readonly IMapper mapper;
 
-        public GetDepositCalculationApiController(IDepositService depositService, IMapper mapper)
+        public GetDepositCalculationApiController(IDepositService depositService)
         {
             this.depositService = depositService;
-            this.mapper = mapper;
         }
 
         [HttpGet]
@@ -27,8 +25,7 @@ namespace DepositApi.Controllers
         public async Task<ActionResult> GetAsync([FromQuery] DepositCalculationsViewModel model)
         {
             string id = User?.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            var depositCalculationDTOs = await this.depositService.GetDepositCalculationsAsync(model.DepositId.Value, id);
-            var depositCalculations = this.mapper.Map<List<DepositCalculationModel>>(depositCalculationDTOs);
+            var depositCalculations = await this.depositService.GetDepositCalculationsAsync(model.DepositId.Value, id);
 
             return Ok(depositCalculations);
         }

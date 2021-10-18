@@ -1,4 +1,4 @@
-﻿using DepositApi.Models;
+﻿using DepositApi.Core.Models;
 using FluentValidation;
 
 namespace DepositApi.FluentValidation

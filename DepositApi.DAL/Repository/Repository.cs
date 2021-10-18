@@ -36,7 +36,7 @@ namespace DepositApi.DAL.Repository
             return await this.dbSet.FindAsync(id);
         }
 
-        public async Task<IEnumerable<T>> FindRangeAsync(Expression<Func<T, bool>> predicate, int startIndex, int count)
+        public async Task<List<T>> FindRangeAsync(Expression<Func<T, bool>> predicate, int startIndex, int count)
         {
             return await this.dbSet.Where(predicate).Skip(startIndex).Take(count).ToListAsync();
         }
