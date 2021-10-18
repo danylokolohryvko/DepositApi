@@ -13,6 +13,7 @@ namespace DepositApiDI
         {
             services.AddDbContext<AppDbContext>(options =>
                 options.UseSqlServer(connection));
+            services.AddScoped<DbContext, AppDbContext>();
             services.AddScoped<IRepository<DepositModel>, Repository<DepositModel>>();
             services.AddScoped<IRepository<DepositCalculationModel>, Repository<DepositCalculationModel>>();
         }

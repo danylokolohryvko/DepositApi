@@ -1,5 +1,4 @@
-﻿using DepositApi.DAL.EntityFramework;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -12,9 +11,9 @@ namespace DepositApi.DAL.Repository
     public class Repository<T> : IRepository<T> where T : class
     {
         private readonly DbSet<T> dbSet;
-        private readonly AppDbContext context;
+        private readonly DbContext context;
 
-        public Repository(AppDbContext context)
+        public Repository(DbContext context)
         {
             this.context = context;
             this.dbSet = context.Set<T>();
