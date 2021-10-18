@@ -24,7 +24,7 @@ namespace DepositApi.Controllers
 
         [HttpGet]
         [Authorize]
-        public async Task<ActionResult> Get([FromQuery] DepositsViewModel model)
+        public async Task<ActionResult> GetAsync([FromQuery] DepositsViewModel model)
         {
             string id = User?.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             var depositDTOs = await this.depositService.GetDepositsAsync(model.StartIndex.Value, model.Count.Value, id) ;

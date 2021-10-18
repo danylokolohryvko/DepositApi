@@ -17,6 +17,6 @@ namespace DepositApi.DAL.Repository
 
         public Task UpdateAsync(T item);
 
-        public Task Delete(int id);
+        public Task DeleteAsync(int id);
     }
 }

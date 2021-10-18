@@ -23,7 +23,7 @@ namespace DepositApi.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult> Get([FromQuery] DepositModel deposit)
+        public async Task<ActionResult> GetAsync([FromQuery] DepositModel deposit)
         {
             string id = User?.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             var depositDTO = this.mapper.Map<DepositDTO>(deposit);

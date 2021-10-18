@@ -47,7 +47,7 @@ namespace DepositApi.DAL.Repository
             await this.context.SaveChangesAsync();
         }
 
-        public async Task Delete(int id)
+        public async Task DeleteAsync(int id)
         {
             T entity = await dbSet.FindAsync(id);
             this.dbSet.Remove(entity);
