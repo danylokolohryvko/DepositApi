@@ -12,23 +12,21 @@ namespace DepositApi.DAL.UnitTests
     [TestFixture]
     public class RepositoryUnitTest
     {
-        private DbContextOptions options;
+        private readonly DbContextOptions options;
 
         public RepositoryUnitTest()
         {
             this.options = new DbContextOptionsBuilder<TestDbContext>().UseSqlServer(@"Server=(localdb)\mssqllocaldb;Database=DepositApiTest;Trusted_Connection=True").Options;
-            using (var context = new TestDbContext(options))
-            {
-                context.Database.EnsureDeleted();
-                context.Database.EnsureCreated();
-                context.Set<TestModel>().AddRange(new TestModel[] {
+            using var context = new TestDbContext(options);
+            context.Database.EnsureDeleted();
+            context.Database.EnsureCreated();
+            context.Set<TestModel>().AddRange(new TestModel[] {
                     new TestModel { Name = "Item" },
                     new TestModel { Name = "Second" },
                     new TestModel { Name = "Third" },
                     new TestModel { Name = "Fourth" },
                 });
-                context.SaveChanges();
-            }
+            context.SaveChanges();
         }
 
         [Test]
