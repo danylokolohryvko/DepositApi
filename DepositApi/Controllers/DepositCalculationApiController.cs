@@ -1,7 +1,6 @@
 ﻿using DepositApi.Core.Intrerfaces;
 using DepositApi.Core.Models;
 using Microsoft.AspNetCore.Mvc;
-using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace DepositApi.Controllers
