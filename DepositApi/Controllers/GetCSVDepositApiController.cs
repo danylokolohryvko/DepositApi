@@ -21,8 +21,7 @@ namespace DepositApi.Controllers
         [Authorize]
         public async Task<ActionResult> GetAsync(int depositId)
         {
-            string id = User?.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            var depositCalculationCSV = await this.depositService.GetDepositCalculationCSVAsync(depositId, id);
+            var depositCalculationCSV = await this.depositService.GetDepositCalculationCSVAsync(depositId);
 
             return Ok(depositCalculationCSV);
         }

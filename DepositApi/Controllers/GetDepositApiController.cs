@@ -22,8 +22,7 @@ namespace DepositApi.Controllers
         [Authorize]
         public async Task<ActionResult> GetAsync([FromQuery] DepositsViewModel model)
         {
-            string id = User?.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            var deposits = await this.depositService.GetDepositsAsync(model.StartIndex.Value, model.Count.Value, id) ;
+            var deposits = await this.depositService.GetDepositsAsync(model.StartIndex.Value, model.Count.Value) ;
 
             return Ok(deposits);
         }

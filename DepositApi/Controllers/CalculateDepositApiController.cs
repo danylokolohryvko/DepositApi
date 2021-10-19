@@ -20,8 +20,7 @@ namespace DepositApi.Controllers
         [HttpGet]
         public async Task<ActionResult> GetAsync([FromQuery] DepositModel deposit)
         {
-            string id = User?.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            var depositCalculation = await this.depositService.PercentCalculationAsync(deposit, id);
+            var depositCalculation = await this.depositService.PercentCalculationAsync(deposit);
 
             return Ok(depositCalculation);
         }

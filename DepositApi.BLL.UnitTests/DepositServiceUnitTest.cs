@@ -2,11 +2,15 @@
 using DepositApi.Core.Enums;
 using DepositApi.Core.Intrerfaces;
 using DepositApi.Core.Models;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Moq;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace DepositApi.BLL.UnitTests
@@ -80,11 +84,12 @@ namespace DepositApi.BLL.UnitTests
         {
             var depositMock = this.DepositRepositoryMock;
             var depositCalculationMock = this.DepositCalculationRepositoryMock;
-            var service = new DepositService(depositMock.Object, depositCalculationMock.Object);
+            var contextMock = GetContextMock("1");
+            var service = new DepositService(depositMock.Object, depositCalculationMock.Object, contextMock.Object);
             var model = this.DepositModel;
             model.CalculationType = CalculationType.SimpleInterest;
 
-            var item = await service.PercentCalculationAsync(model, "1");
+            var item = await service.PercentCalculationAsync(model);
 
             Assert.AreEqual(10, item[0].PercentAdded);
             Assert.AreEqual(1010, item[0].TotalAmount);
@@ -104,10 +109,11 @@ namespace DepositApi.BLL.UnitTests
         {
             var depositMock = this.DepositRepositoryMock;
             var depositCalculationMock = this.DepositCalculationRepositoryMock;
-            var service = new DepositService(depositMock.Object, depositCalculationMock.Object);
+            var contextMock = GetContextMock("1");
+            var service = new DepositService(depositMock.Object, depositCalculationMock.Object, contextMock.Object);
             var model = this.DepositModel;
 
-            var item = await service.PercentCalculationAsync(model, "1");
+            var item = await service.PercentCalculationAsync(model);
 
             Assert.AreEqual(10, item[0].PercentAdded);
             Assert.AreEqual(1010, item[0].TotalAmount);
@@ -127,9 +133,10 @@ namespace DepositApi.BLL.UnitTests
         {
             var depositMock = this.DepositRepositoryMock;
             var depositCalculationMock = this.DepositCalculationRepositoryMock;
-            var service = new DepositService(depositMock.Object, depositCalculationMock.Object);
+            var contextMock = GetContextMock("1");
+            var service = new DepositService(depositMock.Object, depositCalculationMock.Object, contextMock.Object);
 
-            var item = await service.GetDepositsAsync(0, 3, "1");
+            var item = await service.GetDepositsAsync(0, 3);
 
             Assert.IsNotNull(item);
             depositMock.Verify(r => r.FindRangeAsync(It.IsAny<Expression<Func<DepositModel, bool>>>(), It.IsAny<int>(), It.IsAny<int>()));
@@ -140,7 +147,7 @@ namespace DepositApi.BLL.UnitTests
         {
             var depositMock = this.DepositRepositoryMock;
             var depositCalculationMock = this.DepositCalculationRepositoryMock;
-            var service = new DepositService(depositMock.Object, depositCalculationMock.Object);
+            var service = new DepositService(depositMock.Object, depositCalculationMock.Object, GetContextMock(null).Object);
 
             var item = await service.GetDepositsAsync(0, 3);
 
@@ -152,9 +159,10 @@ namespace DepositApi.BLL.UnitTests
         {
             var depositMock = this.DepositRepositoryMock;
             var depositCalculationMock = this.DepositCalculationRepositoryMock;
-            var service = new DepositService(depositMock.Object, depositCalculationMock.Object);
+            var contextMock = GetContextMock("1");
+            var service = new DepositService(depositMock.Object, depositCalculationMock.Object, contextMock.Object);
 
-            var item = await service.GetDepositCalculationsAsync(0, "1");
+            var item = await service.GetDepositCalculationsAsync(0);
 
             Assert.IsNotNull(item);
             depositMock.Verify(r => r.FindAsync(It.IsAny<int>()));
@@ -166,9 +174,9 @@ namespace DepositApi.BLL.UnitTests
         {
             var depositMock = this.DepositRepositoryMock;
             var depositCalculationMock = this.DepositCalculationRepositoryMock;
-            var service = new DepositService(depositMock.Object, depositCalculationMock.Object);
+            var service = new DepositService(depositMock.Object, depositCalculationMock.Object, GetContextMock(null).Object);
 
-            var item = await service.GetDepositCalculationsAsync(0, null);
+            var item = await service.GetDepositCalculationsAsync(0);
 
             Assert.IsNull(item);
         }
@@ -178,9 +186,10 @@ namespace DepositApi.BLL.UnitTests
         {
             var depositMock = this.DepositRepositoryMock;
             var depositCalculationMock = this.DepositCalculationRepositoryMock;
-            var service = new DepositService(depositMock.Object, depositCalculationMock.Object);
+            var contextMock = GetContextMock("1");
+            var service = new DepositService(depositMock.Object, depositCalculationMock.Object, contextMock.Object);
 
-            var item = await service.GetDepositCalculationCSVAsync(0, "1");
+            var item = await service.GetDepositCalculationCSVAsync(0);
 
             Assert.AreEqual("1,5,1005\n2,5,1010\n3,5,1015\n", item);
             depositMock.Verify(r => r.FindAsync(It.IsAny<int>()));
@@ -192,11 +201,33 @@ namespace DepositApi.BLL.UnitTests
         {
             var depositMock = this.DepositRepositoryMock;
             var depositCalculationMock = this.DepositCalculationRepositoryMock;
-            var service = new DepositService(depositMock.Object, depositCalculationMock.Object);
+            var service = new DepositService(depositMock.Object, depositCalculationMock.Object, GetContextMock(null).Object);
 
-            var item = await service.GetDepositCalculationCSVAsync(0, null);
+            var item = await service.GetDepositCalculationCSVAsync(0);
 
             Assert.IsNull(item);
+        }
+
+        private Mock<IActionContextAccessor> GetContextMock(string userId)
+        {
+            ClaimsPrincipal user;
+            if(userId != null)
+            {
+                user = new ClaimsPrincipal(new ClaimsIdentity(new Claim[] { new Claim(ClaimTypes.NameIdentifier, userId) }));
+            }
+            else
+            {
+                user = new ClaimsPrincipal();
+            }
+
+            var context = new ActionContext();
+            context.HttpContext = new DefaultHttpContext();
+            context.HttpContext.User = user;
+
+            var mock = new Mock<IActionContextAccessor>();
+            mock.Setup(c => c.ActionContext).Returns(context);
+
+            return mock;
         }
     }
 }
