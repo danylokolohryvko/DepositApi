@@ -76,7 +76,7 @@ namespace DepositApi.BLL.Services
                 return null;
             }
 
-            var depositCalculations = await this.depositCalculationRepository.FindRangeAsync(d => d.DepositId == depositId, 0, 100);
+            var depositCalculations = await this.depositCalculationRepository.FindRangeAsync(d => d.DepositId == depositId, 0, Int32.MaxValue);
 
             return depositCalculations;
         }

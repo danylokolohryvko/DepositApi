@@ -1,6 +1,7 @@
 ﻿using DepositApi.Controllers;
 using DepositApi.Models;
 using DepositApi.UnitTests.Utility;
+using Microsoft.AspNetCore.Mvc;
 using Moq;
 using NUnit.Framework;
 using System;
@@ -11,10 +12,10 @@ using System.Threading.Tasks;
 namespace DepositApi.UnitTests.ControllersTests
 {
     [TestFixture]
-    class GetDepositApiControllerUnitTests
+    public class GetDepositApiControllerTests
     {
         [Test]
-        public async Task GetAsync_ProperMethodCall()
+        public async Task GetAsync_ExpectListDeposit_AsyncMethodCall()
         {
             var mock = MockProvider.GetIDepositService();
             var model = new DepositsViewModel
@@ -24,9 +25,10 @@ namespace DepositApi.UnitTests.ControllersTests
             };
 
             var controller = new GetDepositApiController(mock.Object);
-            var item = await controller.GetAsync(model);
+            var item = (OkObjectResult)await controller.GetAsync(model);
 
-            mock.Verify(s => s.GetDepositsAsync(It.IsAny<int>(), It.IsAny<int>()));
+            Assert.AreEqual(item.Value, ModelsProvider.DepositModelsList);
+            mock.Verify(s => s.GetDepositsAsync(It.Is<int>(i => i == 1), It.Is<int>(i => i == 1)));
         }
     }
 }

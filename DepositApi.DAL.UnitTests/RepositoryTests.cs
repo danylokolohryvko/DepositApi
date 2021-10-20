@@ -10,11 +10,11 @@ using System.Linq;
 namespace DepositApi.DAL.UnitTests
 {
     [TestFixture]
-    public class RepositoryUnitTest
+    public class RepositoryTests
     {
         private readonly DbContextOptions options;
 
-        public RepositoryUnitTest()
+        public RepositoryTests()
         {
             this.options = new DbContextOptionsBuilder<TestDbContext>().UseSqlServer(@"Server=(localdb)\mssqllocaldb;Database=DepositApiTest;Trusted_Connection=True").Options;
             using var context = new TestDbContext(options);
@@ -30,7 +30,7 @@ namespace DepositApi.DAL.UnitTests
         }
 
         [Test]
-        public async Task CreateAsync_TestModelObjectPassed_ProperMethodCalled()
+        public async Task CreateAsync_TestModelPassed_AsyncMethodCalled()
         {
             var model = new TestModel { Name = "0"};
 
@@ -42,15 +42,15 @@ namespace DepositApi.DAL.UnitTests
 
             using (var context = new TestDbContext(options))
             {
-                var item = context.Set<TestModel>().Single(e => e.Name == "0");
-                Assert.AreEqual(item.Id, model.Id);
+                var item = context.Set<TestModel>().Single(e => e == model);
+                Assert.AreEqual(model.Id, item.Id);
+                Assert.AreEqual(model.Name, item.Name);
             }
         }
 
         [Test]
-        public async Task CreateRangeAsync_TestModelObjectPassed_ProperMethodCalled()
+        public async Task CreateRangeAsync_TestModelsPassed_AsyncMethodCalled()
         {
-            //Arrange
             var models = GetTestModels();
 
             using (var context = new TestDbContext(options))
@@ -63,21 +63,17 @@ namespace DepositApi.DAL.UnitTests
             {
                 var items = context.Set<TestModel>().Where(e => models.Contains(e)).ToList();
 
-                Assert.AreEqual(items[0].Id, models[0].Id);
-                Assert.AreEqual(items[0].Name, models[0].Name);
+                Assert.AreEqual(models[0].Id, items[0].Id);
+                Assert.AreEqual(models[0].Name, items[0].Name);
 
-                Assert.AreEqual(items[1].Id, models[1].Id);
-                Assert.AreEqual(items[1].Name, models[1].Name);
-
-                Assert.AreEqual(items[2].Id, models[2].Id);
-                Assert.AreEqual(items[2].Name, models[2].Name);
+                Assert.AreEqual(models[1].Id, items[1].Id);
+                Assert.AreEqual(models[1].Name, items[1].Name);
             }
         }
 
         [Test]
-        public async Task FindAsync_TestModelObjectPassed_ProperMethodCalled()
+        public async Task FindAsync_ExpectTestModel_AsyncMethodCalled()
         {
-            //Arrange
             TestModel model;
 
             using (var context = new TestDbContext(options))
@@ -89,12 +85,12 @@ namespace DepositApi.DAL.UnitTests
             {
                 var repository = new Repository<TestModel>(context);
                 var item = await repository.FindAsync(model.Id);
-                Assert.AreEqual(item.Name, model.Name);
+                Assert.AreEqual(model.Name, item.Name);
             }
         }
 
         [Test]
-        public async Task FindRangeAsync_TestModelObjectPassed_ProperMethodCalled()
+        public async Task FindRangeAsync_ExpectListTestModel_AsyncMethodCalled()
         {
             var models = new List<TestModel>();
 
@@ -109,18 +105,18 @@ namespace DepositApi.DAL.UnitTests
                 var repository = new Repository<TestModel>(context);
                 var items = await repository.FindRangeAsync(m => m.Name.Length > 4, 0, 2);
 
-                Assert.AreEqual(items[0].Id, models[0].Id);
-                Assert.AreEqual(items[0].Name, models[0].Name);
+                Assert.AreEqual(models[0].Id, items[0].Id);
+                Assert.AreEqual(models[0].Name, items[0].Name);
 
-                Assert.AreEqual(items[1].Id, models[1].Id);
-                Assert.AreEqual(items[1].Name, models[1].Name);
+                Assert.AreEqual(models[1].Id, items[1].Id);
+                Assert.AreEqual(models[1].Name, items[1].Name);
 
                 Assert.AreEqual(items.Count, 2);
             }
         }
 
         [Test]
-        public async Task UpdateAsync_TestModelObjectPassed_ProperMethodCalled()
+        public async Task UpdateAsync_TestModelUpdated_AsyncMethodCalled()
         {
             TestModel model;
 
@@ -134,8 +130,8 @@ namespace DepositApi.DAL.UnitTests
 
             using (var context = new TestDbContext(options))
             {
-                var item = context.Set<TestModel>().Single(e => e.Id == model.Id);
-                Assert.AreEqual(item.Name, model.Name);
+                var item = context.Set<TestModel>().FirstOrDefault(e => e == model);
+                Assert.IsNotNull(item);
 
                 item = context.Set<TestModel>().FirstOrDefault(e => e.Name == "Item");
                 Assert.IsNull(item);
@@ -143,15 +139,15 @@ namespace DepositApi.DAL.UnitTests
         }
 
         [Test]
-        public async Task DeleteAsync_TestModelObjectPassed_ProperMethodCalled()
+        public async Task DeleteAsync_TestModelDeleted_AsyncMethodCalled()
         {
             TestModel model;
 
             using (var context = new TestDbContext(options))
             {
                 model = context.Set<TestModel>().Single(e => e.Name == "Fourth");
-                Assert.IsNotNull(model);
                 var repository = new Repository<TestModel>(context);
+                Assert.IsNotNull(model);
                 await repository.DeleteAsync(model.Id);
             }
 
@@ -168,7 +164,6 @@ namespace DepositApi.DAL.UnitTests
             {
                 new TestModel { Name = "1" },
                 new TestModel { Name = "2" },
-                new TestModel { Name = "3" },
             };
         }
     }

@@ -16,51 +16,33 @@ using System.Threading.Tasks;
 namespace DepositApi.BLL.UnitTests
 {
     [TestFixture]
-    class DepositServiceUnitTest
+    public class DepositServiceTests
     {
-        private DepositModel DepositModel
-        {
-            get
-            {
-                return new DepositModel { Amount = 1000, Percent = 12, Term = 3, UserId = "1", CalculationType = CalculationType.CompoundInterest};
-            }
-        }
+        private static DepositModel DepositModel = new DepositModel { Amount = 1000, Percent = 12, Term = 3, UserId = "1", CalculationType = CalculationType.CompoundInterest};
 
-        private List<DepositModel> DepositModelsList
+        private static List<DepositModel> DepositModelsList = new List<DepositModel>
         {
-            get
-            {
-                return new List<DepositModel>
-                {
-                    DepositModel,
-                    new DepositModel { Amount = 2000, Percent = 4, Term = 4, UserId = "1", CalculationType = CalculationType.SimpleInterest},
-                    new DepositModel { Amount = 3000, Percent = 3, Term = 5, UserId = "1", CalculationType = CalculationType.CompoundInterest}
-                };
-            }
-        }
+            DepositModel,
+            new DepositModel { Amount = 2000, Percent = 4, Term = 4, UserId = "1", CalculationType = CalculationType.SimpleInterest},
+            new DepositModel { Amount = 3000, Percent = 3, Term = 5, UserId = "1", CalculationType = CalculationType.CompoundInterest}
+        };
 
-        private List<DepositCalculationModel> DepositCalculationsList
+        private static List<DepositCalculationModel> DepositCalculationsList = new List<DepositCalculationModel>
         {
-            get
-            {
-                return new List<DepositCalculationModel>
-                {
-                    new DepositCalculationModel { Month = 1, PercentAdded = 5, TotalAmount = 1005},
-                    new DepositCalculationModel { Month = 2, PercentAdded = 5, TotalAmount = 1010},
-                    new DepositCalculationModel { Month = 3, PercentAdded = 5, TotalAmount = 1015}
-                };
-            }
-        }
+            new DepositCalculationModel { Month = 1, PercentAdded = 5, TotalAmount = 1005},
+            new DepositCalculationModel { Month = 2, PercentAdded = 5, TotalAmount = 1010},
+            new DepositCalculationModel { Month = 3, PercentAdded = 5, TotalAmount = 1015}
+        };
 
         private Mock<IRepository<DepositModel>> DepositRepositoryMock
         {
             get
             {
                 var mock = new Mock<IRepository<DepositModel>>();
-                mock.Setup(r => r.FindAsync(It.IsAny<int>())).ReturnsAsync(this.DepositModel);
+                mock.Setup(r => r.FindAsync(It.IsAny<int>())).ReturnsAsync(DepositModel);
                 mock.Setup(r => r.FindRangeAsync(
                     It.IsAny<Expression<Func<DepositModel, bool>>>(), It.IsAny<int>(), It.IsAny<int>()))
-                    .ReturnsAsync(this.DepositModelsList);
+                    .ReturnsAsync(DepositModelsList);
 
                 return mock;
             }
@@ -80,13 +62,13 @@ namespace DepositApi.BLL.UnitTests
         }
 
         [Test]
-        public async Task PercentCalculationAsync_SimpleInterest_ProperMethodCall()
+        public async Task PercentCalculationAsync_SimpleInterest_ExpectListDepositCalculation_AsyncMethodCall()
         {
             var depositMock = this.DepositRepositoryMock;
             var depositCalculationMock = this.DepositCalculationRepositoryMock;
             var contextMock = GetContextMock("1");
             var service = new DepositService(depositMock.Object, depositCalculationMock.Object, contextMock.Object);
-            var model = this.DepositModel;
+            var model = DepositModel;
             model.CalculationType = CalculationType.SimpleInterest;
 
             var item = await service.PercentCalculationAsync(model);
@@ -100,19 +82,19 @@ namespace DepositApi.BLL.UnitTests
             Assert.AreEqual(10, item[2].PercentAdded);
             Assert.AreEqual(1030, item[2].TotalAmount);
 
-            depositMock.Verify(r => r.CreateAsync(It.IsAny<DepositModel>()));
-            depositCalculationMock.Verify(r => r.CreateRangeAsync(It.IsAny<List<DepositCalculationModel>>()));
+            depositMock.Verify(r => r.CreateAsync(It.Is<DepositModel>(m => m == model)));
+            depositCalculationMock.Verify(r => r.CreateRangeAsync(It.Is<List<DepositCalculationModel>>(m => m ==item)));
         }
 
         [Test]
-        public async Task PercentCalculationAsync_CompoundInterest_ProperMethodCall()
+        public async Task PercentCalculationAsync_CompoundInterest_ExpectListDepositCalculation_AsyncMethodCall()
         {
             var depositMock = this.DepositRepositoryMock;
             var depositCalculationMock = this.DepositCalculationRepositoryMock;
             var contextMock = GetContextMock("1");
-            var service = new DepositService(depositMock.Object, depositCalculationMock.Object, contextMock.Object);
-            var model = this.DepositModel;
 
+            var service = new DepositService(depositMock.Object, depositCalculationMock.Object, contextMock.Object);
+            var model = DepositModel;
             var item = await service.PercentCalculationAsync(model);
 
             Assert.AreEqual(10, item[0].PercentAdded);
@@ -124,12 +106,12 @@ namespace DepositApi.BLL.UnitTests
             Assert.AreEqual(10.2, item[2].PercentAdded);
             Assert.AreEqual(1030.3, item[2].TotalAmount);
 
-            depositMock.Verify(r => r.CreateAsync(It.IsAny<DepositModel>()));
-            depositCalculationMock.Verify(r => r.CreateRangeAsync(It.IsAny<List<DepositCalculationModel>>()));
+            depositMock.Verify(r => r.CreateAsync(It.Is<DepositModel>(m => m == model)));
+            depositCalculationMock.Verify(r => r.CreateRangeAsync(It.Is<List<DepositCalculationModel>>(m => m == item)));
         }
 
         [Test]
-        public async Task GetDepositsAsync_WithUserId_ProperMethodCall()
+        public async Task GetDepositsAsync_WithUserId_ExpectListDeposit_AsyncMethodCall()
         {
             var depositMock = this.DepositRepositoryMock;
             var depositCalculationMock = this.DepositCalculationRepositoryMock;
@@ -138,12 +120,12 @@ namespace DepositApi.BLL.UnitTests
 
             var item = await service.GetDepositsAsync(0, 3);
 
-            Assert.IsNotNull(item);
-            depositMock.Verify(r => r.FindRangeAsync(It.IsAny<Expression<Func<DepositModel, bool>>>(), It.IsAny<int>(), It.IsAny<int>()));
+            Assert.AreEqual(DepositModelsList, item);
+            depositMock.Verify(r => r.FindRangeAsync(It.IsAny<Expression<Func<DepositModel, bool>>>(), It.Is<int>(i => i == 0), It.Is<int>(i => i == 3)));
         }
 
         [Test]
-        public async Task GetDepositsAsync_WithoutUserId_ProperMethodCall()
+        public async Task GetDepositsAsync_WithoutUserId_ExpectNull_AsyncMethodCall()
         {
             var depositMock = this.DepositRepositoryMock;
             var depositCalculationMock = this.DepositCalculationRepositoryMock;
@@ -155,7 +137,7 @@ namespace DepositApi.BLL.UnitTests
         }
 
         [Test]
-        public async Task GetDepositCalculationsAsync_WithUserId_ProperMethodCall()
+        public async Task GetDepositCalculationsAsync_WithUserId_ExpectListDepositCalculation_AsyncMethodCall()
         {
             var depositMock = this.DepositRepositoryMock;
             var depositCalculationMock = this.DepositCalculationRepositoryMock;
@@ -164,13 +146,13 @@ namespace DepositApi.BLL.UnitTests
 
             var item = await service.GetDepositCalculationsAsync(0);
 
-            Assert.IsNotNull(item);
-            depositMock.Verify(r => r.FindAsync(It.IsAny<int>()));
-            depositCalculationMock.Verify(r => r.FindRangeAsync(It.IsAny<Expression<Func<DepositCalculationModel, bool>>>(), It.IsAny<int>(), It.IsAny<int>()));
+            Assert.AreEqual(DepositCalculationsList ,item);
+            depositMock.Verify(r => r.FindAsync(It.Is<int>(i => i == 0)));
+            depositCalculationMock.Verify(r => r.FindRangeAsync(It.IsAny<Expression<Func<DepositCalculationModel, bool>>>(), It.Is<int>(i => i == 0), It.Is<int>(i => i == Int32.MaxValue)));
         }
 
         [Test]
-        public async Task GetDepositCalculationsAsync_WithoutUserId_ProperMethodCall()
+        public async Task GetDepositCalculationsAsync_WithoutUserId_ExpectNull_AsyncMethodCall()
         {
             var depositMock = this.DepositRepositoryMock;
             var depositCalculationMock = this.DepositCalculationRepositoryMock;
@@ -182,7 +164,7 @@ namespace DepositApi.BLL.UnitTests
         }
 
         [Test]
-        public async Task GetDepositCalculationCSVAsync_WithUserId_ProperMethodCall()
+        public async Task GetDepositCalculationCSVAsync_WithUserId_ExpectString_AsyncMethodCall()
         {
             var depositMock = this.DepositRepositoryMock;
             var depositCalculationMock = this.DepositCalculationRepositoryMock;
@@ -197,7 +179,7 @@ namespace DepositApi.BLL.UnitTests
         }
 
         [Test]
-        public async Task GetDepositCalculationCSVAsync_WithoutUserId_ProperMethodCall()
+        public async Task GetDepositCalculationCSVAsync_WithoutUserId_ExpectNull_AsyncMethodCall()
         {
             var depositMock = this.DepositRepositoryMock;
             var depositCalculationMock = this.DepositCalculationRepositoryMock;

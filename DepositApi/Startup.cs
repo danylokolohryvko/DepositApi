@@ -9,6 +9,7 @@ using Microsoft.Extensions.Hosting;
 using FluentValidation.AspNetCore;
 using Microsoft.IdentityModel.Tokens;
 using DepositApi.Core.Intrerfaces;
+using Microsoft.AspNetCore.Mvc.Infrastructure;
 
 namespace DepositApi
 {
@@ -35,6 +36,7 @@ namespace DepositApi
 
             string connection = Configuration.GetConnectionString("DefaultConnection");
             Dependencies.Inject(services, connection);
+            services.AddSingleton<IActionContextAccessor, ActionContextAccessor>();
             services.AddScoped<IDepositService, DepositService>();
 
             string authUrl = Configuration.GetSection("Urls").GetSection("Authority").Value;
