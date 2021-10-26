@@ -1,13 +1,13 @@
-﻿using DepositApi.DAL.Models;
+﻿using DepositApi.Core.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace DepositApi.DAL.EntityFramework
 {
     public class AppDbContext : DbContext
     {
-        public DbSet<Deposit> deposits;
+        public DbSet<DepositModel> deposits;
 
-        public DbSet<DepositCalculation> depositCalculations;
+        public DbSet<DepositCalculationModel> depositCalculations;
 
         public AppDbContext(DbContextOptions options) : base(options) 
         {
@@ -17,9 +17,9 @@ namespace DepositApi.DAL.EntityFramework
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
-            modelBuilder.Entity<Deposit>()
+            modelBuilder.Entity<DepositModel>()
                 .ToTable("Deposits");
-            modelBuilder.Entity<DepositCalculation>()
+            modelBuilder.Entity<DepositCalculationModel>()
                 .ToTable("DepositCalcs");
         }
     }

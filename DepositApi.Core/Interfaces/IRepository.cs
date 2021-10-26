@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 
-namespace DepositApi.DAL.Repository
+namespace DepositApi.Core.Intrerfaces
 {
     public interface IRepository<T> where T : class
     {
@@ -13,10 +13,10 @@ namespace DepositApi.DAL.Repository
 
         public Task<T> FindAsync(int id);
 
-        public Task<IEnumerable<T>> FindRangeAsync(Expression<Func<T, bool>> predicate, int startIndex, int count);
+        public Task<List<T>> FindRangeAsync(Expression<Func<T, bool>> predicate, int startIndex, int count);
 
         public Task UpdateAsync(T item);
 
-        public Task Delete(int id);
+        public Task DeleteAsync(int id);
     }
 }

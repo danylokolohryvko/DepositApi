@@ -1,4 +1,4 @@
-﻿using DepositApi.Models;
+﻿using DepositApi.Core.Models;
 using FluentValidation;
 
 namespace DepositApi.FluentValidation
@@ -10,6 +10,7 @@ namespace DepositApi.FluentValidation
             RuleFor(d => d.Amount).NotNull();
             RuleFor(d => d.Term).NotNull();
             RuleFor(d => d.Percent).NotNull();
+            RuleFor(d => d.CalculationType).NotNull();
         }
     }
 }

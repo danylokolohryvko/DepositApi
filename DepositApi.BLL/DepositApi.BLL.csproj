@@ -5,11 +5,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="AutoMapper" Version="10.1.1" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Core" Version="2.2.5" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\DepositApi.DAL\DepositApi.DAL.csproj" />
+    <ProjectReference Include="..\DepositApi.Core\DepositApi.Core.csproj" />
   </ItemGroup>
 
 </Project>

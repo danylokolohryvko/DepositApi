@@ -1,103 +1,143 @@
-﻿using AutoMapper;
-using DepositApi.BLL.DTO;
-using DepositApi.BLL.Intrerfaces;
-using DepositApi.DAL.Models;
-using DepositApi.DAL.Repository;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using DepositApi.Core.Enums;
+using DepositApi.Core.Models;
+using DepositApi.Core.Intrerfaces;
+using Microsoft.AspNetCore.Mvc.Infrastructure;
+using System.Security.Claims;
 
 namespace DepositApi.BLL.Services
 {
     public class DepositService : IDepositService
     {
-        private readonly IRepository<Deposit> depositRepository;
-        private readonly IRepository<DepositCalculation> depositCalculationRepository;
-        private readonly IMapper mapper;
+        private readonly IRepository<DepositModel> depositRepository;
+        private readonly IRepository<DepositCalculationModel> depositCalculationRepository;
+        private readonly IActionContextAccessor contextAccessor;
+        private string UserId
+        {
+            get
+            {
+                var user = this.contextAccessor.ActionContext.HttpContext.User;
+                return user?.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            }
+        }
 
-        public DepositService(IRepository<Deposit> depositRepository, IRepository<DepositCalculation> depositCalculationRepository, IMapper mapper)
+        public DepositService(IRepository<DepositModel> depositRepository, IRepository<DepositCalculationModel> depositCalculationRepository, IActionContextAccessor contextAccessor)
         {
             this.depositRepository = depositRepository;
             this.depositCalculationRepository = depositCalculationRepository;
-            this.mapper = mapper;
+            this.contextAccessor = contextAccessor;
         }
 
-        public async Task<List<DepositCalculationDTO>> PercentCalculationAsync(DepositDTO depositDTO, string userId = null)
+        public async Task<List<DepositCalculationModel>> PercentCalculationAsync(DepositModel deposit)
         {
-            var result = new List<DepositCalculationDTO>();
-            depositDTO.Date = DateTime.UtcNow.Date;
-            var deposit = this.mapper.Map<Deposit>(depositDTO);
+            deposit.Date = DateTime.UtcNow.Date;
 
-            if (userId != null)
+            if (this.UserId != null)
             {
-                deposit.UserId = userId;
+                deposit.UserId = this.UserId;
                 await this.depositRepository.CreateAsync(deposit);
+                deposit.Id = deposit.Id;
             }
 
-            for (int i = 1; i <= depositDTO.Term; i ++)
+            var result = deposit.CalculationType switch
             {
-                result.Add(new DepositCalculationDTO
-                {
-                    Month = i,
-                    PercentAdded = Math.Round(depositDTO.Amount * (depositDTO.Percent / 12 / 100), 2, MidpointRounding.AwayFromZero),
-                    TotalAmount = Math.Round(depositDTO.Amount * (1 + depositDTO.Percent / 12 / 100 * i), 2, MidpointRounding.AwayFromZero),
-                    DepositId = deposit.Id
-                });
-            }
+                CalculationType.CompoundInterest => this.CompoundInterestCalculation(deposit),
+                _ => this.SimpleInterestCalculation(deposit)
+            };
 
-            var depositCalculations = mapper.Map<List<DepositCalculation>>(result);
-
-            if (userId != null)
+            if (this.UserId != null)
             {
-                await this.depositCalculationRepository.CreateRangeAsync(depositCalculations);
+                await this.depositCalculationRepository.CreateRangeAsync(result);
             }
 
             return result;
         }
 
-        public async Task<List<DepositDTO>> GetDepositsAsync(int startIndex = 0, int count = 20, string userId = null)
+        public async Task<List<DepositModel>> GetDepositsAsync(int startIndex = 0, int count = 20)
         {
-            if (userId == null)
+            if (this.UserId == null)
             {
                 return null;
             }
 
-            var deposits = await this.depositRepository.FindRangeAsync(d => d.UserId == userId, startIndex, count);
-            var depositsDTO = this.mapper.Map<List<DepositDTO>>(deposits);
+            var deposits = await this.depositRepository.FindRangeAsync(d => d.UserId == this.UserId, startIndex, count);
 
-            return depositsDTO;
+            return deposits;
         }
 
-        public async Task<List<DepositCalculationDTO>> GetDepositCalculationsAsync(int depositId, string userId)
+        public async Task<List<DepositCalculationModel>> GetDepositCalculationsAsync(int depositId)
         {
             var deposit = await this.depositRepository.FindAsync(depositId);
 
-            if (deposit == null || deposit.UserId != userId)
+            if (deposit == null || deposit.UserId != this.UserId)
             {
                 return null;
             }
 
-            var depositCalculations = await this.depositCalculationRepository.FindRangeAsync(d => d.DepositId == depositId, 0, 100);
-            var depositCalculationDTOs = this.mapper.Map<List<DepositCalculationDTO>>(depositCalculations);
+            var depositCalculations = await this.depositCalculationRepository.FindRangeAsync(d => d.DepositId == depositId, 0, Int32.MaxValue);
 
-            return depositCalculationDTOs;
+            return depositCalculations;
         }
 
-        public async Task<string> GetDepositCalculationCSVAsync(int depositId, string userId)
+        public async Task<string> GetDepositCalculationCSVAsync(int depositId)
         {
             string result = string.Empty;
 
             var deposit = await this.depositRepository.FindAsync(depositId);
 
-            if (deposit == null || deposit.UserId != userId)
+            if (deposit == null || deposit.UserId != this.UserId)
             {
                 return null;
             }
 
             var depositCalculations = await this.depositCalculationRepository.FindRangeAsync(d => d.DepositId == depositId, 0, 100);
-            foreach (DepositCalculation depositCalculation in depositCalculations)
+            foreach (DepositCalculationModel depositCalculation in depositCalculations)
             {
                 result += $"{depositCalculation.Month},{depositCalculation.PercentAdded},{depositCalculation.TotalAmount}\n";
+            }
+
+            return result;
+        }
+
+        private List<DepositCalculationModel> SimpleInterestCalculation(DepositModel deposit)
+        {
+            var result = new List<DepositCalculationModel>();
+
+            for (int i = 1; i <= deposit.Term; i++)
+            {
+                result.Add(new DepositCalculationModel
+                {
+                    Month = i,
+                    PercentAdded = Math.Round(deposit.Amount.Value * (deposit.Percent.Value / 12 / 100), 2, MidpointRounding.AwayFromZero),
+                    TotalAmount = Math.Round(deposit.Amount.Value * (1 + deposit.Percent.Value / 12 / 100 * i), 2, MidpointRounding.AwayFromZero),
+                    DepositId = deposit.Id
+                });
+            }
+
+            return result;
+        }
+
+        private List<DepositCalculationModel> CompoundInterestCalculation(DepositModel depositDTO)
+        {
+            var result = new List<DepositCalculationModel>();
+
+            decimal monthPercent = 1 + depositDTO.Percent.Value / 12 / 100;
+            decimal thisMonthRate = monthPercent;
+            decimal previousMonthRate = 1;
+
+            for (int i = 1; i <= depositDTO.Term; i++)
+            {
+                result.Add(new DepositCalculationModel
+                {
+                    Month = i,
+                    PercentAdded = Math.Round(depositDTO.Amount.Value * (thisMonthRate - previousMonthRate), 2, MidpointRounding.AwayFromZero),
+                    TotalAmount = Math.Round(depositDTO.Amount.Value * thisMonthRate, 2, MidpointRounding.AwayFromZero),
+                    DepositId = depositDTO.Id
+                });
+                previousMonthRate = thisMonthRate;
+                thisMonthRate *= monthPercent;
             }
 
             return result;

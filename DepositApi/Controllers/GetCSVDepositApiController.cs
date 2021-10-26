@@ -1,7 +1,6 @@
-﻿using DepositApi.BLL.Intrerfaces;
+﻿using DepositApi.Core.Intrerfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace DepositApi.Controllers
@@ -19,12 +18,11 @@ namespace DepositApi.Controllers
 
         [HttpGet]
         [Authorize]
-        public async Task<ActionResult> Get(int depositId)
+        public async Task<ActionResult> GetAsync(int depositId)
         {
-            string id = User?.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            var depositCalculationCSV = await this.depositService.GetDepositCalculationCSVAsync(depositId, id);
+            var depositCalculationCSV = await this.depositService.GetDepositCalculationCSVAsync(depositId);
 
-            return Ok(depositCalculationCSV);// "text/plain", "DepositCalculations.csv");
+            return Ok(depositCalculationCSV);
         }
     }
 }

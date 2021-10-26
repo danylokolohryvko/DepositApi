@@ -1,19 +1,19 @@
-﻿using DepositApi.DAL.EntityFramework;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Linq;
 using System.Linq.Expressions;
+using DepositApi.Core.Intrerfaces;
 
 namespace DepositApi.DAL.Repository
 {
     public class Repository<T> : IRepository<T> where T : class
     {
         private readonly DbSet<T> dbSet;
-        private readonly AppDbContext context;
+        private readonly DbContext context;
 
-        public Repository(AppDbContext context)
+        public Repository(DbContext context)
         {
             this.context = context;
             this.dbSet = context.Set<T>();
@@ -36,7 +36,7 @@ namespace DepositApi.DAL.Repository
             return await this.dbSet.FindAsync(id);
         }
 
-        public async Task<IEnumerable<T>> FindRangeAsync(Expression<Func<T, bool>> predicate, int startIndex, int count)
+        public async Task<List<T>> FindRangeAsync(Expression<Func<T, bool>> predicate, int startIndex, int count)
         {
             return await this.dbSet.Where(predicate).Skip(startIndex).Take(count).ToListAsync();
         }
@@ -47,7 +47,7 @@ namespace DepositApi.DAL.Repository
             await this.context.SaveChangesAsync();
         }
 
-        public async Task Delete(int id)
+        public async Task DeleteAsync(int id)
         {
             T entity = await dbSet.FindAsync(id);
             this.dbSet.Remove(entity);

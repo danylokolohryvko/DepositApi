@@ -1,4 +1,4 @@
-﻿namespace DepositApi.Models
+﻿namespace DepositApi.Core.Models
 {
     public class DepositCalculationModel
     {
