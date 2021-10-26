@@ -12,9 +12,10 @@ namespace DepositApi.DAL.UnitTests
     [TestFixture]
     public class RepositoryTests
     {
-        private readonly DbContextOptions options;
+        private DbContextOptions options;
 
-        public RepositoryTests()
+        [SetUp]
+        public void SetUp()
         {
             this.options = new DbContextOptionsBuilder<TestDbContext>().UseSqlServer(@"Server=(localdb)\mssqllocaldb;Database=DepositApiTest;Trusted_Connection=True").Options;
             using var context = new TestDbContext(options);
@@ -42,9 +43,8 @@ namespace DepositApi.DAL.UnitTests
 
             using (var context = new TestDbContext(options))
             {
-                var item = context.Set<TestModel>().Single(e => e == model);
-                Assert.AreEqual(model.Id, item.Id);
-                Assert.AreEqual(model.Name, item.Name);
+                var item = context.Set<TestModel>().FirstOrDefault(e => e == model);
+                Assert.IsNotNull(item);
             }
         }
 
